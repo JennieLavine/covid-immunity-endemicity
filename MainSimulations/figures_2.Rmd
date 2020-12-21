@@ -18,7 +18,9 @@ This is the code for Fig 2a -- the MAPI data figure.
 # Jennie Lavine
 # June 10, 2020
 ######################
-setwd('/Users/jennielavine/Desktop/COVID-19')
+
+#SET YOUR WORKING DIRECTORY TO WHATEVER FOLDER YOU DOWNLOAD THE CODE TO
+#setwd('/Users/jennielavine/Desktop/COVID-19')
 require(tidyverse)
 
 age_grps_min<-rep(c(0,1,4,7,15,31,41,51),8)
