@@ -1,0 +1,1486 @@
+---
+title: "Immunological characteristics will govern changing severity of COVID-19 during
+  the likely transition to endemicity: Supplement"
+author: "Jennie Lavine, Ottar Bjornstad, Rustom Antia"
+date: "Dec 18, 2020"
+output:
+  html_document:
+    df_print: paged
+bibliography: citations_supp.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.width=4, fig.height=3.5, message=FALSE, warning=FALSE)
+```
+
+# Serostudy analysis details {#serostudy}
+
+We used data from a 2013 study @Zhou_2013 on the seroprevalence of IgG
+and IgM antibodies against the Spike (S) protein of the four endemic
+HCoV strains in a cross-section of the population in Beijing, none of
+whom exhibited symptoms. A striking feature of these data is that IgM
+titers are undetectable in all of the more than 140 subjects ages 15 yr
+and older. This observation combined with general knowledge of the the
+IgM response @Schroeder_2010 suggests that  S-specific IgM is only elicited
+during primary infection.  Additionally, IgM titers decay quickly, which makes IgM seropositivity a useful marker of recent primary infection.  
+
+
+Although there are a number of studies that analyze the seroprevalence of antibody titers against endemic HCoV's (see @Huang_2020 for a summary of these data), we chose the Zhou study in particular because they (1) measure IgM and IgG separately, (2) analyze all four endemic HCoVs with the same methodology, (3) have multiple sampling ages during childhood, allowing the data to capture the rise in seroprevalence of both IgG and IgM within the first ten or so years of life, and (4) have adult time points that show sustained IgG titers but the absence of IgM.  We highlight that we use these antibody data as markers of infection to estimate transmission rates and the force of infection; we do not assume their presence provides protective immunity.  (Some of the other studies assess neutralizing antibodies in particular, which are a less sensitive marker of infection, although they may be more strongly correlated with protective immunity.)
+
+We calculate error bars on the seroprevalence for both IgM and IgG for each of the four
+strains. We assume the data for both IgM and IgG stem
+from a binomial process where the probability of seropositivity in age
+group $j$ is $p_j$, estimated by $\hat{p_j}$ and the sample size
+for each age group is $N_j$. The 95\% confidence interval around the
+mean proportion seropositive for each age group is then
+
+\begin{equation}
+  1.96\sqrt \frac{\hat{p_j}(1-\hat{p_j})}{N_j}
+\end{equation}
+
+We further estimate the MAPI following the simple catalytic model framework @Griffiths_1974 using only the IgM data to identify the distribution of age at attack.  We assume that
+the cases are uniformly distributed within each age group -- a more accurate estimate could be obtained from the raw data with smaller age bins; unfortunately we were unable to gain access to it. For each HCoV strain, $s$, we create a vector, $A_s$ with length $L$ containing the  ages of IgM seropositivity (using the midpoints of each age range). We assume
+this is a reasonable reflection of ages of first infection, as IgM
+titers increase only during primary infection and decay in a matter of
+weeks @Wu_2007. This analysis assumes that infections are at a steady state and the age distribution of recent cases (IgM positive individuals) in this cross section of the population is therefore represents the distribution of ages at which individuals first get infected. The 95\% CI for the MAPI for each strain, $s$, is then
+estimated by
+
+\begin{equation}
+  \text{MAPI}_s = \frac{1}{L} \sum{A_s} \pm 1.96 \sqrt{\frac{\text{Var}(A_s)}{L}}
+\end{equation}
+
+# Model derivation {#model}
+
+We derived the model presented in Fig 1 by combining three key sources
+of information: (1) classic SIRS disease transmission models, (2)
+separated functional immune efficacies (IE's, @Halloran:2010aa), and (3) a
+human reinfection experiment with HCoV 229e in fifteen healthy adult
+volunteers @Callow_1990.
+
+In the aforementioned reinfection experiment, all subjects had serum specific antibodies at the
+start, suggesting that participants had already experienced a primary
+infection. The first experimental exposure resulted in viral replication
+and a boosting of IgG titers in ten of the fifteen participants; the
+group that supported viral replication had lower serum specific IgG, IgA
+and nasal IgA levels prior to exposure and shed virus for on average 5.6
+days; eight out of ten had cold symptoms. Antibody titers increased
+significantly approximately a week after infection and then slowly
+decayed over the course of the next year. Among the five participants
+who did not get infected following exposure at the beginning of the
+trial, antibody titers remained relatively constant following exposure;
+however their IgG titers did drop significantly by the end of the year.
+
+One year after the initial exposure, fourteen of the fifteen
+participants were re-exposed. All five who had not sustained an
+infection the first time became infected (their $IE_S$ waned) and one
+developed cold symptoms ($IE_P$ was still strong for four of the
+five). Six of the nine who had supported viral replication a year
+earlier sustained an infection following exposure the second time (their
+$IE_S$ waned within the span of year) but none developed cold symptoms
+(they retained $IE_P$); the other three did not become infected
+following exposure. Among all who got infected at the second time point,
+the mean duration of viral shedding was only 2.0 days, suggesting that
+$IE_I$ had not waned completely.
+
+Based on these observations, the following are the basic equations that
+correspond to Fig 1.
+
+\begin{align}
+  \frac{dS}{dt} &= \mu N - \beta S (I_1 + \rho I_2) - \mu S \\ 
+  \frac{dI_1}{dt} &= \beta S (I_1 + \rho I_2) - (\gamma + \mu) I_1 \\ 
+  \frac{dR_1}{dt} &= \gamma (I_1 + I_2) - (\mu + \omega) R_1\\
+  \frac{dR_2}{dt} &= \omega R_1 - \beta R_2 (I_1 + \rho I_2) - \mu R_2\\
+  \frac{dI_2}{dt} &= \beta R_2 (I_1 + \rho I_2) - (\gamma +\mu) I_2
+\end{align}
+
+where $\mu$ is the birth and death rate, set at 0.02/yr for the steady state simulations.  All other parameters and ranges used are described in main text Table 1.
+
+\subsection{Steady-state analysis}\label{steady-state}
+
+The above equations are used for steady state analysis of the predicted
+mean ages of primary infection (MAPIs, Fig 2B). The model-predicted MAPI for a given set of
+parameters is calculated as the waiting time from birth to first
+infection according to the following equation: \begin{equation}
+ \text{MAPI} = \frac{1}{\beta \hat{I_1} + \rho \beta \hat{I_2}} \text{ yr}
+\end{equation}
+
+where $\hat{I_i}$ is the equilibrium proportion of the population in
+class ${I_i}$.
+
+The equilibrium values are calculated by first running a short (100
+iterations = 1/10 yr) numerical simulation using a wrapper for the R
+function \texttt{lsoda} and then using the final values as estimates to
+start the Newton-Raphson method to find equilibria as implemented in the
+R package \texttt{rootSolve}, function \texttt{stode}.
+
+We additionally calculate the proportion of cases caused by reinfections
+as follows:
+
+\begin{equation}
+\frac{\rho\hat{I_2}}{\hat{I_1}+\rho \hat{I_2}}
+\end{equation}
+
+In addition to the results shown in the main text for $R_0 = 5$, we here
+show figures parallel to Fig 3b for $R_0=2$ and $R_0=10$ (SI Fig 1).
+
+
+
+
+```{r, steady, echo=F, error=FALSE, message=FALSE, warning=FALSE, fig.cap='SI Fig 1'}
+
+setwd('/Users/jennielavine/Desktop/Projects/COVID-19')
+require(tidyverse)
+library(readr)
+require(deSolve)
+
+res<-read_csv('steady_state_res/output_0615_R010.csv')
+res$age_lev<-cut(res$mapi, c(0,1,2,3.4,5.1,7,10,100))
+
+g<-ggplot(data=res, aes(x=rel_2inf, y=omega1))
+g + geom_raster(aes(fill=age_lev))+
+  scale_fill_brewer(palette = "PuOr") +
+  labs(x=expression(rho), y=expression(omega), fill='age grp (yr)')+
+  ggtitle(expression("R"[0]*"=10"))
+
+res<-read_csv('steady_state_res/output_0615_R02.csv')
+res$age_lev<-cut(res$mapi, c(0,1,2,3.4,5.1,7,10,100))
+
+g<-ggplot(data=res, aes(x=rel_2inf, y=omega1))
+g + geom_raster(aes(fill=age_lev))+
+  scale_fill_brewer(palette = "PuOr") +
+  labs(x=expression(rho), y=expression(omega), fill='age grp (yr)')+
+  ggtitle(expression("R"[0]*"=2"))
+
+```
+
+
+## Transient to endemic dynamic simulations {#transient}
+
+To incorporate seasonality with a peak in early January (modeling on
+influenza and seasonal coronaviruses) and the introduction of the virus
+in early March (as was approximately observed with CoV-2 in the US),
+cases are introduced at t=0 and we allow $\beta$ to fluctuate annually
+according to
+
+\begin{equation}
+  \beta = \beta_0 [1 + \beta_1 \cos(2 \pi t + \frac{\pi}{3})]
+\end{equation}
+
+where $\beta_0$ is the mean value of $\beta$, and $\beta_1$ is the
+amplitude of the sin wave. All results shown here use $\beta_1=0.2$
+(SI Figs 3-10 and Figs 3 \& 4 in the main text).
+
+Additionally, to incorporate the age-specific infection fatality ratios, death
+rates ($\delta$), and the current age distribution of the US
+population, we separate each immune state, $X$, into nine age
+classes $X_j$ with 10-yr widths for the first eight classes. The aging rates correspond to the width of the age classes;
+the death rates and age distribution are taken from US data. This yields
+the following equations:
+
+\begin{align}
+  \frac{dS_j}{dt} &= \mu N + \lambda_j S_{j} - \beta S_j \sum_{j=1}^{J}{(I_{1j} + \rho I_{2j})} - (\delta_j + \lambda_{j+1}) S_j \\
+  \frac{dI_{1j}}{dt} &= \lambda_j I_{1} + \beta S_j \sum_{j=1}^{J}{(I_{1j} + \rho I_{2j})} - (\gamma + \delta_j + \lambda_{j+1}) I_{1j} \\ 
+  \frac{dR_{1j}}{dt} &= \lambda_j R_{1j} + \gamma (I_{1j} + I_{2j}) - (\delta_j + \omega + \lambda_{j+1}) R_{1j}\\
+  \frac{dR_{2j}}{dt} &= \lambda_j R_{2j} + \omega R_{1j} - \beta R_{2j} \sum_{j=1}^{J}{(I_{1j} + \rho I_{2j})} - (\delta_j + \lambda_{j+1})R_2\\
+  \frac{dI_{2j}}{dt} &= \lambda_j I_{2j} +\beta R_{2j} \sum_{j=1}^{J}{(I_{1j} + \rho I_{2j})} - (\gamma + \delta_j) I_{2j} 
+\end{align}
+
+where $N(t) = \sum_{j=1}^J{X_t}$ is the total population size at time $t$.  The birth rate, $\mu$, is a vector of length nine, containing the overall population birthrate (based on demographic data) followed by zeros for all subsequent age classes (i.e., people are only born into the youngest age class).
+The age-specific death rates, $\delta_j$, are fixed at values estimated from
+demographic data.  The aging rates, $\lambda_j$, are contained in a vector of length ten: $(0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.04, 0)$. We fix $\gamma$ at $\frac{365}{9}$ corresponding to an
+infectious period that lasts on average nine days. $\beta_0$ is
+calculated according to $\beta_0 = R_0 (\gamma + \mu)$. We consider a
+range of values of $R_0$ (2-10), $\omega$ (0-2), and $\rho$ (0-1).
+
+
+The age-specific death rates were inferred from CDC data Health
+Statistics @NCHS_2018, and were
+calculated as follows:
+
+```{r}
+death_rate_age<-as.data.frame(cbind(age=seq(25,95,by=10), 
+	number=c(30154,58844,80380,164837,374836,543778,675205,880280),
+	rate=c(70.2,128.8,194.7,395.9,886.7,1783.3,4386.1,13450.7)/100000))
+
+death_rate.glm<-with(
+	death_rate_age,glm(rate ~ age,
+		family=gaussian(link='log'))
+	)
+
+pred.ages<-seq(5,85,length=9)
+pred_death_rate<-exp(predict(death_rate.glm, data.frame(age=seq(0,100,by=0.5))))
+mod.pred<-round(exp(predict(death_rate.glm, data.frame(age=pred.ages))),5)
+print(mod.pred)
+```
+
+```{r, echo=F}
+plot(with(death_rate_age, rate~age), xlim=c(0,105), ylab='annual per capita death rate')
+points(seq(0,100,by=0.5),pred_death_rate, type='l')
+points(pred.ages, mod.pred, col=2)
+```
+
+The ages used in the model prediction for death rates were the midpoints
+of the age classes (e.g.~5, 15, 25yr, etc). We used the death rate for
+85 yr olds as the highest death rate.
+
+The initial conditions were set so the population was distributed into
+the nine susceptible classes according to the age distribution of the US
+population @howden_2011.
+
+One infected individuals was seeded into each age group's
+$I_1$ class.
+
+
+
+
+## Calculating infections and the case fatality rate from simulations {#cfr}
+
+The following steps were used to calculate the number of daily
+infections and 6-month moving average infection fatality rate (IFR):
+
+1.  Numerically integrate equations with chosen parameters and initial
+  conditions as described above using the R function \texttt{lsoda} with
+  a time step of one day (1/365 yr).
+2.  Calculate the probability of staying in $I_1$ for a timestep of one
+  day given that you're already there.\\
+  In the simplest version of the model we consider here, this can be
+  calculated using the cumulative distribution function, $F$:
+  \begin{equation}
+  P(\text{stay in I in time step} \Delta t) = 1 - F(\gamma, \Delta t)
+  \end{equation}
+
+```{r}
+gamma=365/9
+time.step=1/365
+prob.stay=1-pexp(rate=gamma, time.step)
+print(prob.stay)
+```
+
+3. For each age group, calculate the number of new primary infections in
+  each time step, $X_{t}$ 
+  \begin{align}
+    I_{t1} = I_{t0} P(\text{stay in I in time step}) + X_t\\*
+    X_t = I_{t1} - I_{t0} P(\text{stay in I in time step}) 
+  \end{align}
+
+
+```{r, eval=F}
+  I_t1 <- tail(out[, 'I1'],-1)
+  I_t0 <- head(out[, 'I1'],-1)
+  X = I_t1 - I_t0 * prob.stay
+```
+
+4. Calculate the projected number of HCoV-induced deaths in each age group based on the age-specific IFR's.
+
+\begin{equation}
+  \text{deaths}_j = X_j * \text{IFR}_j\\
+\end{equation}
+
+5. For every 6-month window, calculate the overall IFR beginning six months into the pandemic
+
+\begin{equation}
+  \frac{\sum_{j=1}^{J}\text{deaths}_j}
+    {\sum_{j=1}^{J}X_j}
+\end{equation}
+
+
+
+
+The key result that the overall IFR drops to something akin to seasonal
+influenza (0.001), is robust across a wide range of values for $R_0$,
+$\omega$ and $\rho$ for COVID-like IFRs. 
+
+
+```{r, echo=F,warning=FALSE,message=FALSE,error=FALSE}
+res<-read_csv('sensitivity_1030.csv')
+g <- ggplot(data=res, aes(x=R0, y=omega))
+
+
+g + geom_tile(aes(fill=CFR_lo_time)) + 
+  scale_fill_gradient2(trans = "log", 
+          breaks = c(0.5,2,8, 32), midpoint=log(0.5))+
+  labs(x=expression("R"[0]), y=expression(omega), 
+       fill='yrs to \nIFR=0.001') +
+  facet_wrap(vars(rho), labeller=label_both)
+  
+```
+
+\section{Model extensions: Gamma-distributed durations of immunity \& gradual build-up of immunity}
+The central results are robust to a model formulation that incorporates a more biologically realistic distribution of how long individuals retain sterilizing immunity (remain in class $R_{1B}$ and the possibility that protective immunity is acquired over the course of the first two infections ($I_{1A}$ and $I_{1B}$) rather than immediately following primary infection.  We assume that individuals who have recovered from a primary infection ($R_{1A}$) and do not yet have protective immunity can become infected ($I_{1B}$) and are then susceptible to death at the same rate as $I_{1A}$ while transmitting only as much as $I_2$.
+The force of infection is therefore calculated according to 
+
+$\Lambda = \beta S_j \sum_{j=1}^{J}{(I_{1Aj} + \rho (I_{1Bj} + I_{2j}))}$. 
+ 
+The Gamma-distributed duration of sterilizing immunity ($R_{1B}$) is modeled by a chain of $\Gamma$ $R_{1B}$ compartments. 
+
+We additionally incorporate the possibility of immunization at rate $\nu$.
+
+This model is simulated from the following equations:
+\begin{align}
+  \frac{dS_j}{dt} &= \mu N + \lambda_j S_{j} - \Lambda S_j - (\nu + \delta_j + \lambda_{j+1}) S_j \\
+  \frac{dI_{1Aj}}{dt} &= \lambda_j I_{1Aj} + \Lambda S_j - (\gamma + \delta_j + \lambda_{j+1}) I_{1Aj} \\ 
+  \frac{dR_{1Aj}}{dt} &= \lambda_j R_{1Aj} + \gamma I_{1j} - (\delta_j + \nu + \lambda_{j+1}) R_{1Aj}\\
+   \frac{dI_{1Bj}}{dt} &= \lambda_j I_{1B} + \Lambda R_{1Aj} - (\gamma + \delta_j + \lambda_{j+1}) I_{1Bj} \\ 
+  \frac{dR_{1Bj1}}{dt} &= \lambda_j R_{1Bj1} + \gamma (I_{1Bj} + I_{2j}) + \nu (S_j + R_{1Aj} + R_{2j} )- (\delta_j + \omega \Gamma + \lambda_{j+1}) R_{1Bj1}\\
+   \frac{dR_{1Bjk}}{dt} &= \lambda_j R_{1Bjk} + \omega \Gamma R_{1Bk-1} - (\delta_j + \omega \Gamma + \lambda_{j+1}) R_{1Bjk}\\
+  \frac{dR_{2j}}{dt} &= \lambda_j R_{2j} + \omega \Gamma R_{1j\Gamma} - \Lambda R_{2j}  - (\delta_j + \lambda_{j+1} + \nu)R_{2j}\\
+  \frac{dI_{2j}}{dt} &= \lambda_j I_{2j} +\Lambda R_{2j} - (\gamma + \delta_j) I_{2j} 
+\end{align}
+
+where $k \in (2,\Gamma)$.
+
+```{r, echo=F}
+#implementation in R
+covid.eq.ages.fun <- function (shape, nageclass){
+  eqnames <- c('dS', 'dI1A', 'dPI', 'dI1B', 'dW', 'dI2', paste('dFI',1:shape, sep=''))
+  statenames <-c('S', 'I1A', 'PI', 'I1B', 'W', 'I2', paste('FI',1:shape, sep=''))
+  eqs <- list(NULL)
+  eqs[[1]]<- quote(dS <- mu * N + age.in * S - 
+                     (lambda + delta + age.out + nu) * S)
+  
+  eqs[[2]] <- quote(dI1A <- age.in * I1A + 
+                      lambda * S - 
+                      (gamma + delta + age.out) * I1A)
+  
+  eqs[[3]] <- quote(dPI <- age.in * PI +
+                      gamma * I1A - 
+                      (lambda + age.out + delta + nu) * PI)
+  
+  eqs[[4]] <- quote(dI1B <- age.in * I1B + 
+                      lambda * PI -
+                      (gamma + delta + age.out) * I1B)
+  
+  eqs[[5]] <- parse(text = paste('dW <- age.in * W + omega * shape *' , 
+                                 tail(statenames,1), 
+                                 '-(lambda + delta + age.out + nu) * W'))[[1]]
+  
+  eqs[[6]] <-quote(dI2 <- age.in * I2 + lambda * W -
+                     (gamma + delta + age.out) * I2)
+  
+  eqs[[7]] <- quote(dFI1 <- age.in*FI1 +  gamma * (I1B + I2) +
+                      (PI + W + S) * nu - 
+                      (omega * shape + delta + age.out) * FI1)
+  
+  if(shape>1){
+    for(i in 2:shape){
+      eqs[[6+i]] <- parse(text = paste(eqnames[6+i],
+                                       '<- age.in *', statenames[6+i],
+                                       '+ omega * shape *', statenames[5+i], 
+                                       ' - (delta + omega * shape + age.out) *', 
+                                       statenames[6+i]) )[[1]]
+    }
+  }
+  return(list(eqs=eqs, snames = statenames, enames = eqnames, shape=shape))
+}
+
+MODEL <- function(t, logstate, parameters, eqs) {
+  state=exp(logstate)
+  with(as.list(c(state, parameters)), {
+    S = matrix(state[1:J], nrow = J, ncol=1)
+    I1A = matrix(state[(J+1):(2*J)], nrow = J, ncol=1)
+    PI = matrix(state[(2*J+1):(3*J)], nrow = J, ncol=1)
+    I1B = matrix(state[(3*J+1):(4*J)], nrow = J, ncol=1)
+    W = matrix(state[(4*J+1):(5*J)], nrow = J, ncol=1)
+    I2 = matrix(state[(5*J+1):(6*J)], nrow = J, ncol=1)
+    FI1 = matrix(state[(6*J+1):(7*J)], nrow = J, ncol=1)
+    if(eqs$shape>1){
+      for(i in 8:length(eqs$snames)){
+        eval(parse(
+          text = paste(eqs$snames[i],
+                       '<- matrix(state[(', i-1,
+                       '*J+1):(', i, '*J)], nrow=J,  ncol=1)',
+                       sep='')
+        ) [[1]])
+      }
+      }
+    
+    N = sum(state)
+    beta = beta0*(1+beta1*cos(2*pi*t+(pi/3)))
+    age.in <- matrix(c(0, aging), nrow=J, ncol=1)
+    age.out <- matrix(c(aging, 0), nrow=J, ncol=1)
+    lambda = beta * sum(I1A + I1B*rho + I2*rho)
+    shape = eqs$shape
+    
+    res<-rep(0,length=length(eqs$enames)*J)
+    names(res)<-names(state)
+    for(i in 1:length(eqs$eqs)){
+      res[(J*(i-1)+1):(J*i)]<- eval(eqs$eqs[[i]])
+    }
+    return(list(res/state))
+  }) 
+}
+```
+We run the model using the following code, where $J$ identifies the number of age classes, and $gshape$ the shape parameter for the Gamma distributed waning times (or equivalently the number of immune compartments).
+
+```{r, echo=F}
+############
+# CFR data
+##############
+hk.sars <- data.frame(ages=c('[0,14]','[15,24]','[25,34]','[35,44]','[45,54]','[55,64]','[65,74]','>75'))
+hk.sars$prev.10000 <- c(0.1,0.8,2,3.8,2.6,2.5,2.4,3.1)
+hk.sars$cases <- round(1750*(hk.sars$prev.10000/sum(hk.sars$prev.10000)))
+hk.sars$cfr <- c(0,0.5,1.6, 10,13,25.3,52.5,69.6)/100
+hk.sars$deaths<- round(hk.sars$cfr * hk.sars$cases)
+
+cfr.age<-data.frame(
+  path=c(rep(c('mers', 'covid'),each=9),rep('sars',8)),
+  age.mids=c(rep(c(seq(5,75,by=10),92.5),2),c(7.5,20,30,40,50,60,70,85))
+)
+
+cfr.age$cases[cfr.age$path=='mers']<-c(8, 27, 314, 215, 264, 321,333,214, 93)
+cfr.age$deaths[cfr.age$path=='mers']=c(5, 8, 52,63, 76, 103, 114, 118, 49)
+
+cfr.age$cases[cfr.age$path=='covid']<-c(
+  416, 549, 3619, 7600, 8571, 10008, 8583, 3918, 1408)
+cfr.age$deaths[cfr.age$path=='covid']<-c(
+  0,1,7,18,38, 130,309, 312, 208)
+
+cfr.age$cases[cfr.age$path=='sars']<-hk.sars$cases
+cfr.age$deaths[cfr.age$path=='sars']=hk.sars$deaths
+
+cfr.age$cfr<-cfr.age$deaths/cfr.age$cases
+
+#cfr.age$cfr[cfr.age$path=='sars']<-c(0,0,0.9,3.0, 5.0, 10,17.6, 28, 26.3)/100
+
+cfr.age$cfr.lo<-cfr.age$cfr-
+  1.96*sqrt(cfr.age$cfr*(1-cfr.age$cfr)/cfr.age$cases)
+cfr.age$cfr.hi<-cfr.age$cfr+
+  1.96*sqrt(cfr.age$cfr*(1-cfr.age$cfr)/cfr.age$cases)
+
+cfr.age$surv<-cfr.age$cases-cfr.age$deaths
+pred.ages<-seq(5,85,length=9)
+
+ages.sars<-cfr.age$age.mids[cfr.age$path=='sars']
+dat.sars<-as.matrix(cfr.age[cfr.age$path=='sars',c('deaths','surv')])
+fit.sars<-glm(dat.sars ~ poly(ages.sars,2), family='binomial')
+sars.logit <- predict(fit.sars, data.frame(ages.sars=pred.ages))
+pred.sars<- exp(sars.logit)/(1+exp(sars.logit))
+
+ages.mers<-cfr.age$age.mids[cfr.age$path=='mers']
+dat.mers<-as.matrix(cfr.age[cfr.age$path=='mers',c('deaths','surv')])
+fit.mers<-glm(dat.mers ~ poly(ages.mers,3), family='binomial')
+mers.logit <- predict(fit.mers, data.frame(ages.mers=pred.ages))
+pred.mers<- exp(mers.logit)/(1+exp(mers.logit))
+
+ages.covid<-cfr.age$age.mids[cfr.age$path=='covid']
+dat.covid<-as.matrix(cfr.age[cfr.age$path=='covid',c('deaths','surv')])
+fit.covid<-glm(dat.covid ~ poly(ages.covid,2), family='binomial')
+covid.logit <- predict(fit.covid, data.frame(ages.covid=pred.ages))
+pred.covid<- exp(covid.logit)/(1+exp(covid.logit))
+
+##########
+#Read in demog data
+###########
+age_dist<-read.csv('US_age_dist.csv')[,1:2]
+colnames(age_dist) <- c('age', 'pop.size')
+#age_dist$prop<-age_dist$pop.size/sum(age_dist$pop.size)
+
+age_9grp <- as.data.frame(cbind('age'=c(seq(10,80, by=10), 105) , 
+                                'pop.size'=c(sum(age_dist$pop.size[1:2]), 
+                                             sum(age_dist$pop.size[3:4]), 
+                                             sum(age_dist$pop.size[5:6]), 
+                                             sum(age_dist$pop.size[7:8]), 
+                                             sum(age_dist$pop.size[9:10]), 
+                                             sum(age_dist$pop.size[11:12]), 
+                                             sum(age_dist$pop.size[13:14]), 
+                                             sum(age_dist$pop.size[15:16]), 
+                                             sum(age_dist$pop.size[17:21])
+                                )))
+
+age_9grp$prop <- age_9grp$pop.size/sum(age_9grp$pop.size)
+
+age_9grp$cfr.sars <- pred.sars
+#age_9grp$cfr.covid <- pred.covid
+age_9grp$cfr.covid <- c(0.000016, 0.0000695, 0.000309, 0.000844, 0.00161, 0.00595, 0.0193, 0.0428, 0.078)
+age_9grp$cfr.mers <- pred.mers
+
+tot_pop <- sum(age_9grp$pop.size)
+
+
+death_rate_age<-as.data.frame(cbind(age=seq(25,95,by=10), 
+                                    number=c(30154,58844,80380,164837,374836,543778,675205,880280),
+                                    rate=c(70.2,128.8,194.7,395.9,886.7,1783.3,4386.1,13450.7)/100000))
+
+death_rate.glm<-with(
+  death_rate_age,glm(rate ~ age,
+                     family=gaussian(link='log'))
+)
+
+pred_death_rate<-exp(predict(death_rate.glm, data.frame(age=seq(0,100,by=0.5))))
+
+mod.pred<-round(exp(predict(death_rate.glm, data.frame(age=c(seq(5,75,by=10),90) ))),5)
+mean_death_rate<-sum(age_9grp$prop*mod.pred)
+age_9grp$br.death<-mod.pred
+
+#Total number of births in 2018 in the US: 3791712
+#Total number of deaths in 2018 in the US: 2813503
+birth.rate<-11.6/1000
+
+
+
+```
+
+
+
+```{r, eval=T, cache=T, echo=F}
+gshape=10
+J=9
+
+test.eqs<-covid.eq.ages.fun(shape=gshape)
+inits <- rep(0.0000000001,length(test.eqs$snames)*J)
+state.names<-paste(rep(test.eqs$snames,each=J),
+                   rep(letters[1:J], 5),sep='')
+names(inits)<-state.names
+
+inits[grep('S',state.names)]<-age_9grp$prop
+inits[grep('I1A', state.names)]<-1/sum(age_9grp$pop.size)
+inits<-log(inits/sum(inits))
+
+param_grid<-expand.grid(
+  R0 = c(2,4,6), 
+  beta1 = 0.2, #seasonal forcing parameter
+  gamma = 365/9, 
+  omega = 1,
+  rho = 0.7,
+  nu=0
+)
+
+
+params<-list(NULL)
+for(i in 1:nrow(param_grid)){
+  params[[i]]<- list(
+    mu = matrix(c(birth.rate, rep(0, (J-1))), nrow=J, ncol=1),
+    delta = matrix(age_9grp$br.death, nrow=J, ncol=1),
+    beta0 = (param_grid$gamma[i] + birth.rate)*param_grid$R0[i], 
+    beta1 = param_grid$beta1[i], #seasonal forcing parameter
+    aging = matrix(1/(diff(age_9grp$age)),nrow=(J-1), ncol=1),
+    gamma = param_grid$gamma[i], 
+    omega = param_grid$omega[i],
+    rho = param_grid$rho[i],
+    nu = param_grid$nu[i],
+    R0=param_grid$R0[i]
+    )
+}
+
+steps.yr = 365
+maxt = 10
+times=seq(0,maxt, by=1/steps.yr)
+res <- list(NULL)
+
+for(i in 1:nrow(param_grid)) {
+  out <- ode(
+    y = inits,
+    t = times,
+    func = MODEL,
+    parms = params[[i]],
+    eqs = test.eqs
+  )
+  res[[i]] <- list(param_grid[i, ], out)
+  #print(i)
+}
+```
+
+We next calculate the age distributions and 6-month moving average infection fatality ratios.
+
+```{r, echo=F, cache=T}
+fun_0.5yr <- function(deaths = x, cases = y, ind) {
+  sum(deaths[ind:(ind + round(steps.yr/2))]) / sum(cases[ind:(ind + round(steps.yr/2))])
+}
+
+param_grid_res <- cbind(param_grid,
+      disease=rep(c('covid', 'sars','mers'), each=nrow(param_grid)))
+
+cfr<-matrix(NA, ncol=3, nrow=J)
+colnames(cfr) <- c('covid', 'sars','mers')
+for(i in colnames(cfr)){cfr[,i] = age_9grp[,grep(i,names(age_9grp))]}
+
+sim.n<-nrow(param_grid_res)
+
+cases_res<-matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n)
+deaths_res <- as.data.frame(
+  matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n))
+names(deaths_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                       ' R0=',rep(unique(param_grid_res[,'R0']), each=3),  sep='')
+
+cfr_res<-matrix(rep(NA, sim.n*(steps.yr*maxt-(round(steps.yr/2)+1))), ncol=sim.n)
+cfr_res<-as.data.frame(cfr_res)
+names(cfr_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                       ' R0=',rep(unique(param_grid_res[,'R0']), each=3),  sep='')
+infecs_res<-list(NULL)
+
+for(j in 1:length(res)){
+  temp <- res[[j]][[2]]
+  temp[,-1]<-exp(temp[,-1])
+  temp<-as.data.frame(temp)
+  temp.I1 <- temp[,grep('I1', names(temp))]
+  time<-temp$time
+  I1 <-   temp[,grep('I1A', names(temp))] + 
+    temp[,grep('I1B', names(temp))]
+  
+  probs.step <- 1-pexp(rate=unlist(res[[j]][[1]]['gamma']), 1/steps.yr)
+  I_t1 <- tail(I1, -1)
+  I_t0 <- head(I1, -1)
+  X = I_t1 - (I_t0 * probs.step)  #calculate X, new infections at time t
+  newI_step<-X*tot_pop
+  
+  for(i in 1:length(unique(param_grid_res$disease))){
+    disease<-unique(param_grid_res$disease)[i]
+    deaths <- t(t(newI_step) * 
+                  age_9grp[,grep(disease, colnames(age_9grp))])
+    deaths_tot <- apply(deaths, 1, sum)
+    cases_tot <- apply(newI_step, 1, sum)
+    
+    cfr_0.5yr <- c(NULL)
+    for (m in 1:(length(deaths_tot) - round(steps.yr/2)-1)) {
+      cfr_0.5yr[m] <- fun_0.5yr(deaths = deaths_tot,
+                                cases = cases_tot,
+                                ind =  m)
+    }
+
+    cfr_res[,(j-1)*3+i] <- cfr_0.5yr
+    deaths_res[,(j-1)*3+i] <- deaths_tot
+  }
+  infecs_res[[j]] <- newI_step
+  cases_res[, j] <- cases_tot
+}
+cfr_g10 <- cfr_res
+```
+
+The incorporation of Gamma-distributed waning times (using a shape parameter $\Gamma=10$) helps reconcile the short mean duration of immunity with the observation that in the first nine months of the pandemic reinfections appear to be rare. The smaller variance in durations of immunity additionally contribute to stronger cyclical dynamics in general, amplifying the seasonality (SI Fig 4).
+
+```{r, echo=F}
+#Plot Cases & Ages
+annotation_custom2 <- function (grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf, data) 
+{
+  layer(data = data, stat = StatIdentity, position = PositionIdentity, 
+        geom = ggplot2:::GeomCustomAnn,
+        inherit.aes = TRUE, params = list(grob = grob, 
+                                          xmin = xmin, xmax = xmax, 
+                                          ymin = ymin, ymax = ymax))
+}
+
+
+temp <- as.data.frame(infecs_res[[1]])
+temp$R0<-param_grid$R0[1]
+#temp$disease<-params[[1]]$disease
+temp$time<-times[-1]
+age.data<-temp
+
+for(i in 2:length(infecs_res)){
+  temp <- as.data.frame(infecs_res[[i]])
+  temp$R0<-param_grid$R0[i]
+  #temp$disease<-params[[i]]$disease
+  temp$time<-times[-1]
+  age.data<-rbind(age.data, temp)
+}               
+
+age.data$tot_cases <- apply(age.data[,1:J], 1, sum)
+props<-age.data[,1:J]/age.data$tot_cases
+colnames(props)<-paste(colnames(props), '.prop', sep='')
+age.data<-cbind(age.data, props)
+
+age.data<-age.data%>% 
+  pivot_longer(grep('.prop',colnames(age.data)), 
+               names_to = "age_grp", values_to = "prop_cases")
+
+# Plot
+R0.labs<-paste('R0', '=', c(2,4,6), sep='')
+names(R0.labs)<-c(2,4,6)
+age.labs<-c(paste( c(0,head(age_9grp$age,-2)),'-',
+                   head(age_9grp$age,-1), ' yr', sep=''),
+            paste('>',age_9grp$age[8], ' yr', sep='')
+)
+
+g<- ggplot(age.data, aes(x=time))
+
+dat_text <- data.frame(
+  label = R0.labs,
+  R0   = c(2,4,6),
+  x     = rep(2,3),
+  y     = rep(2.5E7,3)
+)
+
+max.y<-max(age.data$prop_cases*max(age.data$tot_cases))
+
+g.main <- g + geom_area(aes(y=prop_cases*max(tot_cases), fill=age_grp), alpha=0.8 , size=1) + 
+  scale_fill_discrete(labels = age.labs)+
+  geom_line(aes(y=tot_cases) ) +
+  scale_y_continuous(limits=c(0,max.y+(max.y/100)), 
+                     sec.axis = sec_axis( trans=~./max.y, 
+                                          name="Prop in age grp (colored area)", breaks=c(0,1))) +
+  facet_grid(vars(R0)) +
+  labs(x='Time (yr)', y='Daily cases (----)', 
+       fill='Proportion of \nprimary + \nsecondary \ninfections by \n age group') + 
+  geom_text(data = dat_text,
+            mapping = aes(x = x, y = y, label = label)) +
+  theme(strip.background = element_blank(),
+        strip.text.y = element_blank())
+
+g.tail.2 <- ggplot(data = subset(age.data, time>5 & R0==2), aes(x=time)) + 
+  geom_line(aes(y=tot_cases), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(5,10)) +
+  scale_y_continuous(breaks = c(0,100000), limits=c(0,100000), labels=c(0,1E5))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank()) 
+
+g.tail.4 <- ggplot(data = subset(age.data, time>5 & R0==4), aes(x=time)) + 
+  geom_line(aes(y=tot_cases), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(5,10)) +
+  scale_y_continuous(breaks = c(0,100000), limits=c(0,100000), labels=c(0,1E5))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)), ## tiny axis text
+        
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+
+
+g.tail.6 <- ggplot(data = subset(age.data, time>5 & R0==6), aes(x=time)) + 
+  geom_line(aes(y=tot_cases), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(5,10)) +
+  scale_y_continuous(breaks = c(0,100000), limits=c(0,100000), labels=c(0,1E5))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)), ## tiny axis text
+        
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+
+g.main + annotation_custom2(grob=ggplotGrob(g.tail.2), 
+                            data=subset(age.data, R0==2),
+                            ymin = 1.3E7, ymax=3.5E7, xmin=5, xmax=10) +
+  annotation_custom2(grob=ggplotGrob(g.tail.4), 
+                     data=subset(age.data, R0==4),
+                     ymin = 1.3E7, ymax=3.5E7, xmin=5, xmax=10)+
+  annotation_custom2(grob=ggplotGrob(g.tail.6), 
+                     data=subset(age.data, R0==6),
+                     ymin = 1.3E7, ymax=3.5E7, xmin=5, xmax=10)
+
+```
+
+
+Here, we consider the possibility that it may take two infections to develop fully protective immunity and show that it extends the time it takes to reach a very low overall IFR, but it still happens in on the order of years to a couple decades (SI Figs 5 \& 6, compare with Fig 3 in the main text).  
+
+```{r, eval=T, echo=F}
+#3 simulations with gamma shape parameter = 1
+gshape=1
+J=9
+
+test.eqs<-covid.eq.ages.fun(shape=gshape)
+inits <- rep(0.0000000001,length(test.eqs$snames)*J)
+state.names<-paste(rep(test.eqs$snames,each=J),
+                   rep(letters[1:J], 5),sep='')
+names(inits)<-state.names
+
+inits[grep('S',state.names)]<-age_9grp$prop
+inits[grep('I1A', state.names)]<-1/sum(age_9grp$pop.size)
+inits<-log(inits/sum(inits))
+
+param_grid<-expand.grid(
+  R0 = c(2,4,6), 
+  beta1 = 0.2, #seasonal forcing parameter
+  gamma = 365/9, 
+  omega = 1,
+  rho = 0.7,
+  nu=0
+)
+
+
+params<-list(NULL)
+for(i in 1:nrow(param_grid)){
+  params[[i]]<- list(
+    mu = matrix(c(birth.rate, rep(0, (J-1))), nrow=J, ncol=1),
+    delta = matrix(age_9grp$br.death, nrow=J, ncol=1),
+    beta0 = (param_grid$gamma[i] + birth.rate)*param_grid$R0[i], 
+    beta1 = param_grid$beta1[i], #seasonal forcing parameter
+    aging = matrix(1/(diff(age_9grp$age)),nrow=(J-1), ncol=1),
+    gamma = param_grid$gamma[i], 
+    omega = param_grid$omega[i],
+    rho = param_grid$rho[i],
+    nu = param_grid$nu[i],
+    R0=param_grid$R0[i]
+    )
+}
+
+steps.yr = 365
+maxt = 10
+times=seq(0,maxt, by=1/steps.yr)
+res <- list(NULL)
+
+for(i in 1:nrow(param_grid)) {
+  out <- ode(
+    y = inits,
+    t = times,
+    func = MODEL,
+    parms = params[[i]],
+    eqs = test.eqs
+  )
+  res[[i]] <- list(param_grid[i, ], out)
+  #print(i)
+}
+fun_0.5yr <- function(deaths = x, cases = y, ind) {
+  sum(deaths[ind:(ind + round(steps.yr/2))]) / sum(cases[ind:(ind + round(steps.yr/2))])
+}
+
+param_grid_res <- cbind(param_grid,
+      disease=rep(c('covid', 'sars','mers'), each=nrow(param_grid)))
+
+cfr<-matrix(NA, ncol=3, nrow=J)
+colnames(cfr) <- c('covid', 'sars','mers')
+for(i in colnames(cfr)){cfr[,i] = age_9grp[,grep(i,names(age_9grp))]}
+
+sim.n<-nrow(param_grid_res)
+
+cases_res<-matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n)
+deaths_res <- as.data.frame(
+  matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n))
+names(deaths_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                       ' R0=',rep(unique(param_grid_res[,'R0']), each=3),  sep='')
+
+cfr_res<-matrix(rep(NA, sim.n*(steps.yr*maxt-(round(steps.yr/2)+1))), ncol=sim.n)
+cfr_res<-as.data.frame(cfr_res)
+names(cfr_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                       ' R0=',rep(unique(param_grid_res[,'R0']), each=3),  sep='')
+infecs_res<-list(NULL)
+
+for(j in 1:length(res)){
+  temp <- res[[j]][[2]]
+  temp[,-1]<-exp(temp[,-1])
+  temp<-as.data.frame(temp)
+  temp.I1 <- temp[,grep('I1', names(temp))]
+  time<-temp$time
+  I1 <-   temp[,grep('I1A', names(temp))] + 
+    temp[,grep('I1B', names(temp))]
+  
+  probs.step <- 1-pexp(rate=unlist(res[[j]][[1]]['gamma']), 1/steps.yr)
+  I_t1 <- tail(I1, -1)
+  I_t0 <- head(I1, -1)
+  X = I_t1 - (I_t0 * probs.step)  #calculate X, new infections at time t
+  newI_step<-X*tot_pop
+  
+  for(i in 1:length(unique(param_grid_res$disease))){
+    disease<-unique(param_grid_res$disease)[i]
+    deaths <- t(t(newI_step) * 
+                  age_9grp[,grep(disease, colnames(age_9grp))])
+    deaths_tot <- apply(deaths, 1, sum)
+    cases_tot <- apply(newI_step, 1, sum)
+    
+    cfr_0.5yr <- c(NULL)
+    for (m in 1:(length(deaths_tot) - round(steps.yr/2)-1)) {
+      cfr_0.5yr[m] <- fun_0.5yr(deaths = deaths_tot,
+                                cases = cases_tot,
+                                ind =  m)
+    }
+
+    cfr_res[,(j-1)*3+i] <- cfr_0.5yr
+    deaths_res[,(j-1)*3+i] <- deaths_tot
+  }
+  infecs_res[[j]] <- newI_step
+  cases_res[, j] <- cases_tot
+}
+```
+
+```{r, echo=F}
+##Plot CFR for gshape=1 for 3 simulations (3 vals R0)
+cfr_res$time<-tail(times, nrow(cfr_res))
+cfr_clean<-gather(cfr_res, params, cfr, -time)
+cfr_clean$disease <- unlist(str_split(cfr_clean$params, ' '))[1:2==1]
+cfr_clean$R0 <- unlist(str_split(cfr_clean$params, ' '))[1:2==2]
+cfr_clean$disease2<-factor(cfr_clean$disease, levels=c('covid','sars','mers'))
+
+path.labs<-c(covid='COVID (CoV-2)', sars='SARS (CoV-1)', mers='MERS')
+
+#pdf('fig4b.pdf',height=6, width=6)
+cfr.plot <- ggplot(data=cfr_clean, aes(x=time, y=cfr, color=disease))
+
+cfr.plot + geom_line(aes(linetype=R0)) + 
+  facet_grid(rows=vars(disease2), scales='free', 
+             labeller=labeller(disease2=path.labs)) +
+  scale_color_discrete(guide=F) + 
+  theme(text = element_text(size = 20))  +
+  labs(x='Time (yr)',y='Infection fatality ratio')
+#dev.off()
+```
+
+```{r, eval=F, echo=F}
+#run simulations over full grid to make time to ifr=0.001 plots.  This code is run twice to generate the two .csv file used, once with gshape=10 and once with gshape=1
+require(tictoc)
+
+#set gshape here
+gshape=10
+J=9
+
+test.eqs<-covid.eq.ages.fun(shape=gshape)
+inits <- rep(0.0000000001,length(test.eqs$snames)*J)
+state.names<-paste(rep(test.eqs$snames,each=J),
+                   rep(letters[1:J], 5),sep='')
+names(inits)<-state.names
+
+inits[grep('S',state.names)]<-age_9grp$prop
+inits[grep('I1A', state.names)]<-1/sum(age_9grp$pop.size)
+inits<-log(inits/sum(inits))
+
+param_grid<-expand.grid(
+  R0 = seq(1.2,6,length=25),
+  beta1 = 0.2, #seasonal forcing parameter
+  gamma = 365/9, 
+  omega =  seq(0.1, 2, length=25),
+  rho = 0.7,
+  nu=0,
+  disease='covid'
+)
+
+#age_9grp$cfr.covid <- pred.covid
+age_9grp$cfr.covid <- c(0.000016, 0.0000695, 0.000309, 0.000844, 0.00161, 0.00595, 0.0193, 0.0428, 0.078)
+
+params<-list(NULL)
+for(i in 1:nrow(param_grid)){
+  params[[i]]<- list(
+    mu = matrix(c(birth.rate, rep(0, (J-1))), nrow=J, ncol=1),
+    delta = matrix(age_9grp$br.death, nrow=J, ncol=1),
+    beta0 = (param_grid$gamma[i] + birth.rate)*param_grid$R0[i], 
+    beta1 = param_grid$beta1[i], #seasonal forcing parameter
+    aging = matrix(1/(diff(age_9grp$age)),nrow=(J-1), ncol=1),
+    gamma = param_grid$gamma[i], 
+    omega = param_grid$omega[i],
+    rho = param_grid$rho[i],
+    nu = param_grid$nu[i],
+    R0=param_grid$R0[i],
+    disease = param_grid$disease[i],
+    cfr = age_9grp[,grep(param_grid$disease[i],names(age_9grp))]
+  )
+}
+
+
+#when does the overall CFR drop below 0.001?
+cfr_thresh=0.001
+param_grid$CFR_lo_time <- NA
+#when do cumulative cases exceed 50% of initial population size?
+cumcases_thresh <- 0.75
+param_grid$cumcases_hi_time <- NA
+#how many COVID-induced deaths have occurred 1-yr into pandemic?
+param_grid$cumdeaths_1yr <- NA
+
+
+steps.yr = 365
+maxt = 30
+times=seq(0,maxt, by=1/steps.yr)
+res <- list(NULL)
+
+tic()
+for(i in 1:nrow(param_grid)) {
+  out <- ode(
+    y = inits,
+    t = times,
+    func = MODEL,
+    parms = params[[i]],
+    eqs = test.eqs
+  )
+  res[[i]] <- list(params[[i]], out)
+  #print(i)
+}
+toc()
+
+#save(res, file='gshape1_sims.RData')
+```
+
+
+```{r, echo=F, eval=F}
+#calculations for results
+fun_0.5yr <- function(deaths = x, cases = y, ind) {
+  sum(deaths[ind:(ind + round(steps.yr/2))]) / sum(cases[ind:(ind + round(steps.yr/2))])
+}
+
+for(j in 1:nrow(param_grid)) {
+  out<-res[[j]][[2]]
+  out <- exp(out)
+  out[,1]<-log(out[,1])
+  
+  probs.step <- 1-pexp(rate=unlist(res[[j]][[1]]['gamma']), 1/steps.yr)
+  
+  I1 <-   out[,grep('I1A', colnames(out))] + out[,grep('I1B', colnames(out))]
+  I_t1 <- tail(I1, -1)
+  I_t0 <- head(I1, -1)
+  X = I_t1 - (I_t0 * probs.step)  #calculate X, new infections at time t
+  ##I_t1 = I_t0*P(staying in I in time step) + X
+  ##X = I_t1 - I_t0*P(staying in I in time step)
+  
+  newI_step<-X*tot_pop
+  
+  deaths <- t(t(newI_step) * age_9grp$cfr.covid)
+  deaths_tot <- apply(deaths, 1, sum)
+  cases_tot <- apply(newI_step, 1, sum)
+  cumcases_tot <- cumsum(cases_tot)
+  cumdeath_tot<- cumsum(deaths_tot)
+  
+  cfr_0.5yr <- c(NULL)
+  for (i in 1:(length(deaths_tot) - round(steps.yr/2)-1)) {
+    cfr_0.5yr[i] <- fun_0.5yr(deaths = deaths_tot,
+                              cases = cases_tot,
+                              ind = i)
+  }
+  
+  param_grid$CFR_lo_time[j] <- min(which(cfr_0.5yr < cfr_thresh)) / steps.yr
+  param_grid$cumcases_hi_time[j] <- 
+    min(which(cumcases_tot > (tot_pop * cumcases_thresh))) / steps.yr
+  
+  param_grid$cumdeaths_1yr[j] <- cumdeath_tot[steps.yr]
+  
+  print(j)
+  
+}
+
+write_csv(param_grid, 'res_gshape1.csv')
+```
+
+```{r, echo=F}
+param_grid_g1 <- read_csv('res_gshape1.csv')
+
+#plot gshape=1
+g <- ggplot(data=subset(param_grid_g1, rho=0.7), aes(x=R0, y=omega))
+
+g + geom_tile(aes(fill=CFR_lo_time)) + 
+  scale_fill_gradient2(trans = "log", 
+                       breaks = c(0.5,1,2,4,8,16, 28), midpoint=log(0.5))+
+  labs(x=expression("R"[0]), y=expression(omega), 
+       fill='yrs to \nIFR=0.001')+
+  theme(text = element_text(size = 16))  
+
+
+
+```
+
+
+Incorporating Gamma-distributed waning times extends this slightly further and makes the transitions more sudden since cases are more highly aggregated in time.
+
+
+```{r, echo=F}
+##Plot CFR for gshape=10
+cfr_res <- cfr_g10
+cfr_res$time<-tail(times, nrow(cfr_res))
+cfr_clean<-gather(cfr_res, params, cfr, -time)
+cfr_clean$disease <- unlist(str_split(cfr_clean$params, ' '))[1:2==1]
+cfr_clean$R0 <- unlist(str_split(cfr_clean$params, ' '))[1:2==2]
+cfr_clean$disease2<-factor(cfr_clean$disease, levels=c('covid','sars','mers'))
+
+path.labs<-c(covid='COVID (CoV-2)', sars='SARS (CoV-1)', mers='MERS')
+
+#pdf('fig4b.pdf',height=6, width=6)
+cfr.plot <- ggplot(data=cfr_clean, aes(x=time, y=cfr, color=disease))
+
+cfr.plot + geom_line(aes(linetype=R0)) + 
+  facet_grid(rows=vars(disease2), scales='free', 
+             labeller=labeller(disease2=path.labs)) +
+  scale_color_discrete(guide=F) + 
+  theme(text = element_text(size = 20))  +
+  labs(x='Time (yr)',y='Infection fatality ratio')
+```
+
+```{r, echo=F}
+#plot gshape=10
+param_grid_g10 <- read_csv( 'res_gshape10.csv')
+g <- ggplot(data=subset(param_grid_g10, rho=0.7), aes(x=R0, y=omega))
+g + geom_tile(aes(fill=CFR_lo_time)) + 
+  scale_fill_gradient2(trans = "log", 
+                       breaks = c(0.5,1,2,4,8,16, 28), midpoint=log(0.5))+
+  labs(x=expression("R"[0]), y=expression(omega), 
+       fill='yrs to \nIFR=0.001')+
+  theme(text = element_text(size = 16))  
+```
+
+# Social distancing and vaccination
+Additionally, we see that keeping $R_0$ below a threshold value (in
+these simulations approximately 2, e.g., by social distancing and the
+use of Personal Protective Equipment) allows us to stop the majority of
+deaths from happening early on, buying time for the development of an
+effective vaccine and/or treatment (SI Fig 9).
+
+```{r, echo=F}
+res<-read_csv('sensitivity_1030.csv')
+
+temp<-subset(res, res$R0<3 & is.element(res$omega, unique(res$omega)[c(1,6,13,25)]))
+temp$omega <-round(temp$omega,1)
+temp$omega <-as.factor(temp$omega)
+
+g <- ggplot(data=temp, aes(x=R0))
+
+g + geom_path(aes(y=cumdeaths_1yr, color=omega)) + 
+  labs(x=expression("R"[0]), y='deaths in yr 1' )+
+  facet_wrap(vars(rho), labeller = label_both)
+```
+
+
+```{r, echo=F}
+gshape=1
+J=9
+
+test.eqs<-covid.eq.ages.fun(shape=gshape)
+inits <- rep(0.0000000001,length(test.eqs$snames)*J)
+state.names<-paste(rep(test.eqs$snames,each=J),
+                   rep(letters[1:J], 5),sep='')
+names(inits)<-state.names
+
+inits[grep('S',state.names)]<-age_9grp$prop
+inits[grep('I1A', state.names)]<-1/sum(age_9grp$pop.size)
+inits<-log(inits/sum(inits))
+
+param_grid<-expand.grid(
+  R0 = 4, 
+  beta1 = 0.2, #seasonal forcing parameter
+  gamma = 365/9, 
+  omega = 1,
+  rho = 0.7,
+  nu=c(0,0.51) #0.51 is 40% of pop vaccinated per yr
+)
+
+
+params<-list(NULL)
+for(i in 1:nrow(param_grid)){
+  params[[i]]<- list(
+    mu = matrix(c(birth.rate, rep(0, (J-1))), nrow=J, ncol=1),
+    delta = matrix(age_9grp$br.death, nrow=J, ncol=1),
+    beta0 = (param_grid$gamma[i] + birth.rate)*param_grid$R0[i], 
+    beta1 = param_grid$beta1[i], #seasonal forcing parameter
+    aging = matrix(1/(diff(age_9grp$age)),nrow=(J-1), ncol=1),
+    gamma = param_grid$gamma[i], 
+    omega = param_grid$omega[i],
+    rho = param_grid$rho[i],
+    nu = param_grid$nu[i],
+    R0=param_grid$R0[i]
+  )
+}
+
+steps.yr = 365
+
+maxt = 10
+times=seq(0,maxt, by=1/steps.yr)
+res <- list(NULL)
+
+for(i in 1:nrow(param_grid)) {
+  out <- ode(
+    y = inits,
+    t = times,
+    func = MODEL,
+    parms = params[[i]],
+    eqs = test.eqs
+  )
+  res[[i]] <- list(param_grid[i, ], out)
+  #print(i)
+}
+
+
+#####################
+# Calculating total deaths
+###################
+param_grid_res <- cbind(param_grid,
+                        disease=rep(c('covid', 'sars','mers'), each=nrow(param_grid)))
+
+#age_9grp$cfr.covid <- pred.covid
+age_9grp$cfr.covid <- c(0.000016, 0.0000695, 0.000309, 0.000844, 0.00161, 0.00595, 0.0193, 0.0428, 0.078)
+
+
+cfr<-matrix(NA, ncol=3, nrow=J)
+colnames(cfr) <- c('covid', 'sars','mers')
+for(i in colnames(cfr)){cfr[,i] = age_9grp[,grep(i,names(age_9grp))]}
+
+sim.n<-nrow(param_grid_res)
+
+cases_res<-matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n)
+deaths_res <- as.data.frame(
+  matrix(rep(NA, sim.n*steps.yr*maxt), ncol=sim.n))
+names(deaths_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                          ' nu=',rep(unique(param_grid_res[,'nu']), each=3),  sep='')
+deaths_0.5yr_res <-matrix(rep(NA, sim.n*(steps.yr*maxt-(round(steps.yr/2)+1))), ncol=sim.n)
+deaths_0.5yr_res<-as.data.frame(deaths_0.5yr_res)
+names(deaths_0.5yr_res)<-paste( rep(unique(param_grid_res$disease), times=nrow(param_grid)),
+                                ' nu=',rep(unique(param_grid_res[,'nu']), each=3),  sep='')
+
+
+
+fun_0.5yr_deaths <- function(deaths = x, ind) {
+  sum(deaths[ind:(ind + round(steps.yr/2))]) / round(steps.yr/2)
+}
+
+for(j in 1:length(res)){
+  temp <- res[[j]][[2]]
+  temp[,-1]<-exp(temp[,-1])
+  temp<-as.data.frame(temp)
+  temp.I1 <- temp[,grep('I1', names(temp))]
+  time<-temp$time
+  I1 <-   temp[,grep('I1A', names(temp))] + 
+    temp[,grep('I1B', names(temp))]
+  
+  probs.step <- 1-pexp(rate=unlist(res[[j]][[1]]['gamma']), 1/steps.yr)
+  I_t1 <- tail(I1, -1)
+  I_t0 <- head(I1, -1)
+  X = I_t1 - (I_t0 * probs.step)  #calculate X, new infections at time t
+  newI_step<-X*tot_pop
+  
+  for(i in 1:length(unique(param_grid_res$disease))){
+    disease<-unique(param_grid_res$disease)[i]
+    deaths <- t(t(newI_step) * 
+                  age_9grp[,grep(disease, colnames(age_9grp))])
+    deaths_tot <- apply(deaths, 1, sum)
+
+    deaths_0.5yr <- c(NULL)
+    for (m in 1:(length(deaths_tot) - round(steps.yr/2)-1)) {
+      deaths_0.5yr[m] <- fun_0.5yr_deaths(deaths = deaths_tot,
+                                ind = m)
+    }
+    deaths_res[,(j-1)*3+i] <- deaths_tot
+    deaths_0.5yr_res[,(j-1)*3+i] <- deaths_0.5yr
+  }
+
+}
+
+######################
+#Plotting
+######################
+
+##Plot deaths
+
+ind = rep(1:maxt, each=steps.yr)
+deaths_ann = apply(deaths_res, 2, function(x){temp=c(NULL)
+  for(i in 1:maxt){
+    temp[i] = sum(x[ind==i])
+  }
+return(temp)})
+deaths_ann <- as.data.frame(deaths_ann)
+deaths_ann$time <- 1:nrow(deaths_ann)
+deaths_ann_clean <- pivot_longer(
+  deaths_ann, -ncol(deaths_ann), names_to='params',
+  values_to='deaths')
+deaths_ann_clean$disease <- unlist(str_split(deaths_ann_clean$params, ' '))[1:2==1]
+deaths_ann_clean$nu <- unlist(str_split(deaths_ann_clean$params, ' '))[1:2==2]
+deaths_ann_clean$disease2<-factor(deaths_ann_clean$disease, levels=c('covid','sars','mers'))
+
+deaths_diff <- matrix(NA, nrow=nrow(deaths_ann), ncol=3)
+colnames(deaths_diff) <- c('covid','sars','mers')
+deaths_diff[,'covid'] <- deaths_ann[,1] - deaths_ann[,4]
+deaths_diff[,'sars'] <- deaths_ann[,2] - deaths_ann[,5]
+deaths_diff[,'mers'] <- deaths_ann[,3] - deaths_ann[,6]
+deaths_diff <-as.data.frame(deaths_diff)
+deaths_diff$time <- deaths_ann$time
+deaths_diff_clean <- pivot_longer(
+  deaths_diff, -ncol(deaths_diff), names_to = 'disease',
+  values_to = 'diffs'
+)
+
+# deaths_clean<-gather(deaths_res, params, deaths, -time)
+ # deaths_clean$disease <- unlist(str_split(deaths_clean$params, ' '))[1:2==1]
+ # deaths_clean$nu <- unlist(str_split(deaths_clean$params, ' '))[1:2==2]
+ # deaths_clean$disease2<-factor(deaths_clean$disease, levels=c('covid','sars','mers'))
+
+path.labs<-c(covid='COVID (CoV-2)', sars='SARS (CoV-1)', mers='MERS')
+
+
+#pdf('fig4b.pdf',height=6, width=6)
+
+deaths.diff.plot <- ggplot(data=subset(deaths_diff_clean, time>0), 
+                           aes(x=time, y=diffs, color=disease))
+
+diffs.main <- deaths.diff.plot + geom_line() +   
+  scale_color_discrete(guide=F) + 
+  theme(text = element_text(size = 20))  +
+  labs(x='Time after emergence (yr)',y='Lives saved annually')+
+  scale_x_continuous(breaks=seq(2,10,by=2)) +
+  facet_grid(rows=vars(disease), scales='free_y')
+
+diffs.tail.covid <- ggplot(data = subset(
+  deaths_diff_clean, time>3 & disease=='covid'), 
+  aes(x=time)) + 
+  geom_line(aes(y=diffs), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(4,6,8,10)) +
+  scale_y_continuous(breaks = c(0,500), limits=c(0,500), labels=c(0,500))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)), ## tiny axis text
+        
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+
+diffs.tail.sars <- ggplot(data = subset(
+  deaths_diff_clean, time>3 & disease=='sars'), 
+  aes(x=time)) + 
+  geom_line(aes(y=diffs), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(4,6,8,10)) +
+  scale_y_continuous(breaks = c(0,12500), limits=c(0,12500), labels=c(0,12500))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)), ## tiny axis text
+        
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+
+diffs.tail.mers <- ggplot(data = subset(
+  deaths_diff_clean, time>3 & disease=='mers'), 
+  aes(x=time)) + 
+  geom_line(aes(y=diffs), size=0.25) +  
+  guides(fill=FALSE) +
+  scale_x_continuous(breaks=c(4,6,8,10)) +
+  scale_y_continuous(breaks = c(0,9E5), limits=c(0,9E5), labels=c(0,9E5))+
+  theme_bw(base_size=8) +  ## makes everything smaller
+  theme(panel.background = element_rect(fill="white"),  ## white plot background 
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=rel(0.7)), ## tiny axis text
+        axis.text.y = element_text(size=rel(0.7)), ## tiny axis text
+        
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+
+diffs.main + annotation_custom2(grob=ggplotGrob(diffs.tail.covid), 
+                            data=subset(deaths_diff_clean, disease=='covid'),
+                            ymin = 1E5, ymax=4.5E5, xmin=3, xmax=10) +
+  annotation_custom2(grob=ggplotGrob(diffs.tail.sars), 
+                     data=subset(deaths_diff_clean, disease=='sars'),
+                     ymin = 2.5E6, ymax=7.7E6, xmin=3, xmax=10)+
+  annotation_custom2(grob=ggplotGrob(diffs.tail.mers), 
+                     data=subset(deaths_diff_clean, disease=='mers'),
+                     ymin = 5E6, ymax=1.7E7, xmin=3, xmax=10)
+
+  
+```
+
+
+# Loss of immunity kernel {#kernel}
+We estimate the duration of sterilizing immunity based on @Callow_1990, in which six out of nine people who got infected at the start of the experiment were susceptible to reinfection one year later.  We can calculate the mean of $\omega given this for exponentially distributed waning times setting the CDF equal to 2/3.
+\begin{equation}
+\frac{1}{\bar{\omega}} = \frac{1}{\log{2/3}} = 0.91
+\end{equation}
+
+```{r}
+lambdas=seq(0,2,by=0.01)
+plot(lambdas, pexp(1,rate=lambdas), type='l')
+abline(h=0.66667, v=1.099)
+```
+
+Given this, the estimate for $omega$ is 1.099 and the mean waiting time is 1/$\omega$ = 0.91 yr.
+
+We can also find the average duration of immunity for normally distributed waning times.  We assume that the variance is the same as for the exponential model, $\frac{1}{\lambda^2}$ and the standard deviation is $\frac{1}{\lambda}$.
+```{r}
+means = seq(0,2,by=0.01)
+plot(means,pnorm(1, mean=means, sd=1/1.099), type='l')
+abline(h=0.6667)
+abline(v=0.61)
+```
+Here, we find the estimate for the mean of $\omega$ to be 0.61/yr, so the mean waiting time is $\frac{1}{0.61} = 1.64 yr$.
+
+Alternatively, we can compute this from 
+
+
+# Age-severity curves
+
+We estimate the age-severity curves for the three HCoVs to have emerged in the past few decades using published data (CoV-2 @Verity:2020lid, SARS CoV-1 @ChanYeung_2003, and MERS @Salamatbakhsh:2019bmc}).  We then fit a generalized linear models to each data set to estimate a smoothed CFR as a function of age.  We use a binomial model in which total cases in an age group is considered the number of trials, and the number of deaths is considered the number of 'successes'.  For MERS, we allow the function to be a third degree polynomial to account for the non-monotonicity of the data.  We consider a second degree polynomial for SARS CoV-1 and -2, since the relationship between age and CFR appears monotonic in the data for these.
+
+```{r, echo=F}
+require(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+
+
+hk.sars <- data.frame(ages=c('[0,14]','[15,24]','[25,34]','[35,44]','[45,54]','[55,64]','[65,74]','>75'))
+hk.sars$prev.10000 <- c(0.1,0.8,2,3.8,2.6,2.5,2.4,3.1)
+hk.sars$cases <- round(1750*(hk.sars$prev.10000/sum(hk.sars$prev.10000)))
+hk.sars$cfr <- c(0,0.5,1.6, 10,13,25.3,52.5,69.6)/100
+hk.sars$deaths<- round(hk.sars$cfr * hk.sars$cases)
+
+cfr.age<-data.frame(
+  path=c(rep(c('mers', 'covid'),each=9),rep('sars',8)),
+  age.mids=c(rep(c(seq(5,75,by=10),92.5),2),c(7.5,20,30,40,50,60,70,85))
+)
+
+cfr.age$cases[cfr.age$path=='mers']<-c(8, 27, 314, 215, 264, 321,333,214, 93)
+cfr.age$deaths[cfr.age$path=='mers']=c(5, 8, 52,63, 76, 103, 114, 118, 49)
+
+cfr.age$cases[cfr.age$path=='covid']<-c(
+  416, 549, 3619, 7600, 8571, 10008, 8583, 3918, 1408)
+cfr.age$deaths[cfr.age$path=='covid']<-c(
+  0,1,7,18,38, 130,309, 312, 208)
+
+cfr.age$cases[cfr.age$path=='sars']<-hk.sars$cases
+cfr.age$deaths[cfr.age$path=='sars']=hk.sars$deaths
+
+cfr.age$cfr<-cfr.age$deaths/cfr.age$cases
+
+#cfr.age$cfr[cfr.age$path=='sars']<-c(0,0,0.9,3.0, 5.0, 10,17.6, 28, 26.3)/100
+
+cfr.age$cfr.lo<-cfr.age$cfr-
+  1.96*sqrt(cfr.age$cfr*(1-cfr.age$cfr)/cfr.age$cases)
+cfr.age$cfr.hi<-cfr.age$cfr+
+  1.96*sqrt(cfr.age$cfr*(1-cfr.age$cfr)/cfr.age$cases)
+
+cfr.age$surv<-cfr.age$cases-cfr.age$deaths
+pred.ages<-seq(5,85,length=9)
+
+ages.sars<-cfr.age$age.mids[cfr.age$path=='sars']
+dat.sars<-as.matrix(cfr.age[cfr.age$path=='sars',c('deaths','surv')])
+fit.sars<-glm(dat.sars ~ poly(ages.sars,2), family='binomial')
+sars.logit <- predict(fit.sars, data.frame(ages.sars=pred.ages))
+pred.sars<- exp(sars.logit)/(1+exp(sars.logit))
+
+ages.mers<-cfr.age$age.mids[cfr.age$path=='mers']
+dat.mers<-as.matrix(cfr.age[cfr.age$path=='mers',c('deaths','surv')])
+fit.mers<-glm(dat.mers ~ poly(ages.mers,3), family='binomial')
+mers.logit <- predict(fit.mers, data.frame(ages.mers=pred.ages))
+pred.mers<- exp(mers.logit)/(1+exp(mers.logit))
+
+ages.covid<-cfr.age$age.mids[cfr.age$path=='covid']
+dat.covid<-as.matrix(cfr.age[cfr.age$path=='covid',c('deaths','surv')])
+fit.covid<-glm(dat.covid ~ poly(ages.covid,2), family='binomial')
+covid.logit <- predict(fit.covid, data.frame(ages.covid=pred.ages))
+pred.covid<- exp(covid.logit)/(1+exp(covid.logit))
+
+#pdf(file='fig4a.pdf',height=5, width=6)
+ggplot(mapping= aes(x=age.mids, y=deaths/cases, colour=path, succ=deaths, fail=cases-deaths))+
+  geom_point(data=cfr.age) +
+  geom_smooth(data=subset(cfr.age, cfr.age$path=='mers'),
+    method="glm",
+    method.args=list(family="binomial"),
+    formula = cbind(succ, fail) ~ poly(x,3)  
+    ) +
+  geom_smooth(data=subset(cfr.age, cfr.age$path!='mers'),
+    method="glm",
+    method.args=list(family="binomial"),
+    formula = cbind(succ, fail) ~ poly(x,2) 
+    ) +
+  labs(x='midpoint of age groups (yr)', y='case fatality rate', color='pathogen')+
+   scale_color_discrete(labels = c("CoV-2", "MERS", "CoV-1"))+
+  theme(text = element_text(size = 20))   
+#dev.off()
+
+```
+
+
+## Citations
